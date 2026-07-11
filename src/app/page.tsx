@@ -17,7 +17,6 @@ const PERSON_JSON_LD = {
   name: SITE.name,
   url: SITE.url,
   jobTitle: "Software Engineer",
-  worksFor: { "@type": "Organization", name: "Arctic Wolf" },
   alumniOf: [
     { "@type": "CollegeOrUniversity", name: "University of Waterloo" },
     { "@type": "CollegeOrUniversity", name: "Georgia Institute of Technology" },

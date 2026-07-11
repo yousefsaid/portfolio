@@ -21,23 +21,32 @@ export function Experience() {
               <span className="text-[15px] font-semibold text-(--ink-60)">
                 {role.company}
               </span>
+              {role.kind && (
+                <span className="rounded-full px-2.5 py-0.5 text-[10.5px] font-bold tracking-wide bg-white/8 border border-white/15 text-(--ink-45)">
+                  {role.kind}
+                </span>
+              )}
               <span className="ml-auto font-mono text-[11.5px] text-(--ink-45)">
                 {role.period}
               </span>
             </div>
-            <p className="font-mono text-[11px] text-(--ink-45) mb-3">
-              {role.location}
-            </p>
-            <ul className="flex flex-col gap-1.5">
-              {role.highlights.map((highlight) => (
-                <li
-                  key={highlight}
-                  className="text-[14px] leading-relaxed text-(--ink-60) pl-4 relative before:content-['—'] before:absolute before:left-0 before:text-(--ink-45)"
-                >
-                  {highlight}
-                </li>
-              ))}
-            </ul>
+            {role.location && (
+              <p className="font-mono text-[11px] text-(--ink-45) mb-3">
+                {role.location}
+              </p>
+            )}
+            {role.highlights.length > 0 && (
+              <ul className="flex flex-col gap-1.5 mt-2">
+                {role.highlights.map((highlight) => (
+                  <li
+                    key={highlight}
+                    className="text-[14px] leading-relaxed text-(--ink-60) pl-4 relative before:content-['—'] before:absolute before:left-0 before:text-(--ink-45)"
+                  >
+                    {highlight}
+                  </li>
+                ))}
+              </ul>
+            )}
           </article>
         ))}
 

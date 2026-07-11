@@ -8,9 +8,9 @@ export function ContactCta() {
         <h2 className="text-[30px] sm:text-[38px] font-extrabold tracking-tight mb-3">
           Let&apos;s build something.
         </h2>
-        <p className="text-[16px] text-(--ink-60) leading-relaxed max-w-[440px] mx-auto mb-8">
-          Open to interesting problems in developer platforms, infrastructure,
-          and AI systems. The fastest way to reach me is email.
+        <p className="text-[16px] text-(--ink-60) leading-relaxed max-w-[460px] mx-auto mb-8">
+          I&apos;m actively looking for my next role — developer platforms,
+          infrastructure, or AI systems. The fastest way to reach me is email.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <a
