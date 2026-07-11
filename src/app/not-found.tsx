@@ -12,7 +12,7 @@ export default function NotFound() {
           Nothing orbiting here
         </h1>
         <p className="text-[15px] text-(--ink-60) leading-relaxed mb-8">
-          This page doesn&apos;t exist — it may have drifted off the globe.
+          This page doesn&apos;t exist. It probably drifted off the globe.
         </p>
         <Link href="/" className="glass-btn glass-btn-primary">
           Back home

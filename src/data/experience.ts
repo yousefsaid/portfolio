@@ -25,10 +25,10 @@ export const ROLES: readonly Role[] = [
     period: "Jun 2024 — May 2026",
     location: "Remote",
     highlights: [
-      "Owned the Bazel build platform for a 500+ engineer Python monorepo — deterministic builds and shared tooling across hundreds of services.",
-      "Rolled out a remote disk cache that cut CI build times 43%, reclaiming an estimated 300+ build-hours per week across the org.",
-      "Architected an event-driven SBOM compliance pipeline on AWS (ECR, EventBridge, Lambda, Inspector, Athena), automating CVE scanning across containerized services.",
-      "Resolved org-wide AWS reliability issues — SQS/DLQ failures in the CodeArtifact replication pipeline, OIDC/IAM misconfigurations, and a Lambda concurrency race under high event throughput.",
+      "Owned the Bazel build platform for a Python monorepo shared by 500+ engineers: deterministic builds and shared tooling across hundreds of services.",
+      "Rolled out a remote disk cache that cut CI build times 43%, saving an estimated 300+ build-hours per week across the org.",
+      "Built an event-driven SBOM compliance pipeline on AWS (ECR, EventBridge, Lambda, Inspector, Athena) that automates CVE scanning across containerized services.",
+      "Fixed org-wide AWS reliability issues: SQS/DLQ failures in the CodeArtifact replication pipeline, OIDC/IAM misconfigurations, and a Lambda concurrency race that only showed up under heavy event throughput.",
     ],
   },
   {
@@ -38,7 +38,7 @@ export const ROLES: readonly Role[] = [
     period: "Mar — Jun 2024",
     kind: "Part-time",
     highlights: [
-      "Built developer tooling around Bazel, CI, and containerized workflows, improving local development ergonomics across services.",
+      "Built developer tooling around Bazel, CI, and containers, making local development and testing less painful across services.",
     ],
   },
   {
@@ -48,7 +48,7 @@ export const ROLES: readonly Role[] = [
     period: "Sep — Dec 2023",
     kind: "Internship",
     highlights: [
-      "Designed a dev-container management system on AWS and GitHub Actions automating large-scale image updates; integrated Bazel into CI pipelines.",
+      "Designed a dev-container management system on AWS and GitHub Actions to automate large-scale image updates, and integrated Bazel into the CI pipelines.",
     ],
   },
   {
@@ -58,7 +58,7 @@ export const ROLES: readonly Role[] = [
     period: "Jan — Apr 2023",
     kind: "Internship",
     highlights: [
-      "Built React/TypeScript features for Super's cash product and webhook event handlers keeping user balances up to date in real time.",
+      "Built React and TypeScript features for Super's cash product, plus webhook handlers that keep user balances current in real time.",
     ],
   },
   {
@@ -98,7 +98,7 @@ export const ROLES: readonly Role[] = [
     period: "Jan — Apr 2021",
     kind: "Internship",
     highlights: [
-      "Cut server costs 50% by migrating data to IBM Cloud; built a Python/React chatbot and a REST API that improved call times 30%.",
+      "Cut server costs 50% by migrating data to IBM Cloud, built a Python/React chatbot, and shipped a REST API that improved call times 30%.",
     ],
   },
   {
@@ -115,7 +115,7 @@ export const SCHOOLS: readonly School[] = [
   {
     id: "gatech",
     institution: "Georgia Institute of Technology",
-    degree: "MS Computer Science — AI specialization",
+    degree: "MS Computer Science, AI specialization",
     period: "2026 — Present",
   },
   {

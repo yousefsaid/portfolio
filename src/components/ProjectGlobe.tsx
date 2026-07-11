@@ -119,7 +119,7 @@ export function ProjectGlobe({ projects, selectedId, onSelect }: ProjectGlobePro
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       role="group"
-      aria-label="Projects globe — drag to rotate"
+      aria-label="Projects globe, drag to rotate"
     >
       <div
         className="globe-sphere"

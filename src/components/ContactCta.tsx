@@ -9,8 +9,9 @@ export function ContactCta() {
           Let&apos;s build something.
         </h2>
         <p className="text-[16px] text-(--ink-60) leading-relaxed max-w-[460px] mx-auto mb-8">
-          I&apos;m actively looking for my next role — developer platforms,
-          infrastructure, or AI systems. The fastest way to reach me is email.
+          I&apos;m looking for my next role, ideally working on developer
+          platforms, infrastructure, or AI systems. Email is the fastest way
+          to reach me.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <a

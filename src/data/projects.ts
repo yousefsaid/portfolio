@@ -17,7 +17,7 @@ export const PROJECTS: readonly Project[] = [
     title: "Sentinel Trace",
     tag: "TypeScript · Next.js · OpenTelemetry · Convex",
     description:
-      "Real-time observability sidecar for multi-agent LLM pipelines — telemetry ingestion on the OpenTelemetry GenAI conventions with a persistent Convex state backend for drift detection, latency analysis, and per-token cost tracking.",
+      "Watches multi-agent LLM pipelines in real time. Ingests telemetry using the OpenTelemetry GenAI conventions and stores every trace in Convex, so you can catch drift, track latency, and see what each agent costs per token.",
     hue: "linear-gradient(135deg, #8f7ee0, #5aa6e8)",
     liveUrl: "https://sentineltrace-rouge.vercel.app",
     repoUrl: "https://github.com/yousefsaid/sentinel-trace",
@@ -27,7 +27,7 @@ export const PROJECTS: readonly Project[] = [
     title: "Shadow Architect",
     tag: "Next.js · React Flow · Convex · Python",
     description:
-      "Multi-agent system that turns infrastructure configs — AWS, Docker, Bazel — into interactive topology graphs, with a drift-detection loop that compares state across runs and flags unapproved changes.",
+      "Turns infrastructure configs (AWS, Docker, Bazel) into interactive topology graphs using a team of agents. A drift-detection loop compares state between runs and flags anything that changed without approval.",
     hue: "linear-gradient(135deg, #e08bb0, #f2c894)",
     liveUrl: "https://shadowarch-gold.vercel.app",
     repoUrl: "https://github.com/yousefsaid/shadow-architect",
@@ -37,7 +37,7 @@ export const PROJECTS: readonly Project[] = [
     title: "ICOM",
     tag: "Python · Pydantic AI",
     description:
-      "AI incident commander that orchestrates triage, communication, and remediation during live incidents. Built with Pydantic AI — winner of Arctic Wolf's internal hackathon.",
+      "An AI incident commander that handles triage, comms, and remediation during live incidents. Built with Pydantic AI. Won Arctic Wolf's internal hackathon.",
     hue: "linear-gradient(135deg, #7ea2e8, #b48be0)",
     award: "Hackathon winner",
   },
@@ -55,7 +55,7 @@ export const PROJECTS: readonly Project[] = [
     title: "FlappyAI",
     tag: "Python",
     description:
-      "A Flappy Bird-playing AI in Python — the bird learns to thread the pipes on its own.",
+      "A Flappy Bird AI in Python. The bird teaches itself to thread the pipes.",
     hue: "linear-gradient(135deg, #f2c894, #7ed4c0)",
     repoUrl: "https://github.com/yousefsaid/FlappyAI",
   },

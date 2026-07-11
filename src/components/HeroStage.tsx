@@ -100,7 +100,7 @@ export function HeroStage() {
       </div>
 
       <p className="hidden lg:block absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11.5px] tracking-[0.14em] uppercase text-[rgba(241,239,250,0.35)]">
-        projects — drag to explore
+        projects · drag to explore
       </p>
     </section>
   );
