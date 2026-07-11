@@ -19,7 +19,7 @@ export function HeroStage() {
         <p className="text-[32px] sm:text-[40px] font-extrabold tracking-tight mt-1.5">
           {SITE.name}
         </p>
-        <p className="font-mono text-[12.5px] tracking-wide text-(--ink-45) mt-2">
+        <p className="text-[14.5px] font-medium text-(--ink-45) mt-2">
           {SITE.role}
         </p>
         <p className="text-[17px] font-medium text-(--ink-60) mt-2.5 leading-normal">
@@ -51,8 +51,8 @@ export function HeroStage() {
             LinkedIn
           </a>
         </div>
-        <p className="font-mono text-xs tracking-wider text-(--ink-45) mt-8">
-          drag the globe · hover a project
+        <p className="text-[13.5px] italic text-(--ink-45) mt-8">
+          drag the globe, hover a project
         </p>
       </div>
 
@@ -60,10 +60,6 @@ export function HeroStage() {
       <div className="relative flex-1 min-h-[480px] lg:absolute lg:right-[4vw] lg:top-1/2 lg:-translate-y-1/2 lg:w-[min(720px,58vw)] lg:h-[min(720px,88vh)] flex items-center justify-center">
         <ProjectGlobe projects={PROJECTS} />
       </div>
-
-      <p className="hidden lg:block absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11.5px] tracking-[0.14em] uppercase text-[rgba(241,239,250,0.35)]">
-        projects · drag to explore
-      </p>
     </section>
   );
 }

@@ -228,6 +228,71 @@ body {
   }
 }
 
+/* ---------- experience timeline ---------- */
+
+.tl-line {
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+/* Gradient fill that grows with scroll progress. */
+.tl-line-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 14px rgba(163, 148, 240, 0.55);
+  transition: height 0.15s linear;
+}
+
+.tl-dot {
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #17142a;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Entries start hidden only once JS is live (tl-ready), so content is
+   fully visible without JS and under prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .tl-ready .tl-item {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .tl-ready .tl-item.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tl-item.in-view .tl-dot,
+.tl-track:not(.tl-ready) .tl-dot {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(163, 148, 240, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-line-fill {
+    height: 100% !important;
+    transition: none;
+  }
+
+  .tl-dot {
+    border-color: var(--accent);
+  }
+}
+
 /* ---------- project globe ---------- */
 
 .globe-viewport {
@@ -281,20 +346,9 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-/* Hover/focus/tap expands the tile in place to show project details. */
-.globe-tile.expanded {
-  width: 250px;
-  height: auto;
-  min-height: 240px;
-  margin: -120px 0 0 -125px;
-  padding: 18px;
-  background: rgba(20, 17, 34, 0.92);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  cursor: default;
-  z-index: 5;
+.globe-tile.active {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .globe-tile-logo {
@@ -303,16 +357,55 @@ body {
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
 }
 
-.globe-tile-detail {
-  display: block;
-  margin-top: 8px;
+/* Flat detail card centered over the globe viewport. Display-only on
+   hover (pointer-events off so it never blocks dragging); interactive
+   once pinned by a click. */
+.globe-detail {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 290px;
+  transform: translate(-50%, -50%) scale(0.96);
+  padding: 22px;
+  border-radius: 24px;
+  background: rgba(19, 16, 32, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 10;
 }
 
-.globe-tile-desc {
-  display: block;
-  font-size: 12px;
-  line-height: 1.55;
-  color: rgba(241, 239, 250, 0.72);
+.globe-detail.open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.globe-detail.pinned {
+  pointer-events: auto;
+}
+
+.globe-detail-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink-60);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.globe-detail-close:hover {
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .globe-tile-link {
@@ -351,10 +444,8 @@ body {
     padding: 11px;
   }
 
-  .globe-tile.expanded {
-    width: 220px;
-    height: auto;
-    min-height: 220px;
-    margin: -110px 0 0 -110px;
+  .globe-detail {
+    width: 250px;
+    padding: 18px;
   }
 }

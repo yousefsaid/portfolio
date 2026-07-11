@@ -23,38 +23,50 @@ interface DragState {
 
 const MIN_TILES = 20;
 const AUTO_SPIN_DEG_PER_FRAME = 0.12;
-const EXPAND_Z_BOOST = 130;
 
 interface ProjectGlobeProps {
   projects: readonly Project[];
 }
 
 /**
- * Draggable sphere of project tiles. Hovering (or tapping / focusing)
- * a tile expands it in place to show the project details, so the
- * intro column stays visible throughout.
+ * Draggable sphere of project tiles. Hovering a tile previews its
+ * details in a flat card centered over the globe (never skewed by the
+ * sphere's rotation); clicking pins the card so its links are usable.
  */
 export function ProjectGlobe({ projects }: ProjectGlobeProps) {
   const [rot, setRot] = useState<Rotation>({ x: -12, y: 0 });
   const [grabbing, setGrabbing] = useState(false);
-  const [activeKey, setActiveKey] = useState<string | null>(null);
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [pinned, setPinned] = useState(false);
   const dragRef = useRef<DragState | null>(null);
   const movedRef = useRef(false);
   const activeRef = useRef(false);
   const [radius, setRadius] = useState(MAX_RADIUS);
 
   useEffect(() => {
-    activeRef.current = activeKey !== null;
-  }, [activeKey]);
+    activeRef.current = activeIdx !== null;
+  }, [activeIdx]);
 
   const tiles = useMemo(() => densify(projects, MIN_TILES), [projects]);
   const positions = useMemo(() => spherePositions(tiles.length), [tiles.length]);
+  const active = activeIdx !== null ? tiles[activeIdx] : null;
 
   useEffect(() => {
     const update = () => setRadius(radiusForViewport(window.innerWidth));
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveIdx(null);
+        setPinned(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -71,7 +83,7 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     return () => observer.disconnect();
   }, []);
 
-  // Idle spin, paused while dragging, while a tile is open, or off-screen.
+  // Idle spin, paused while dragging, while a card is open, or off-screen.
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     let raf = 0;
@@ -107,7 +119,8 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     const dy = e.clientY - drag.pointerY;
     if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 4) {
       movedRef.current = true;
-      setActiveKey(null);
+      setActiveIdx(null);
+      setPinned(false);
       // Capture only once a real drag starts, so fast drags keep working
       // outside the globe's bounds. Capturing on pointerdown would retarget
       // the eventual `click` to this element and swallow tile clicks.
@@ -124,29 +137,36 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     setGrabbing(false);
   };
 
-  const openTile = (key: string) => {
-    if (!movedRef.current) setActiveKey(key);
+  const onTileClick = (idx: number) => {
+    if (movedRef.current) return;
+    if (pinned && activeIdx === idx) {
+      setActiveIdx(null);
+      setPinned(false);
+      return;
+    }
+    setActiveIdx(idx);
+    setPinned(true);
   };
 
-  const onTileEnter = (e: React.PointerEvent, key: string, facing: boolean) => {
+  const onTileEnter = (e: React.PointerEvent, idx: number, facing: boolean) => {
     // Ignore hovers on tiles rotated away from the viewer: they are
     // invisible (backface hidden) but can still catch the pointer
     // through gaps between front tiles.
-    if (e.pointerType !== "mouse" || dragRef.current || !facing) return;
-    setActiveKey(key);
+    if (e.pointerType !== "mouse" || dragRef.current || !facing || pinned)
+      return;
+    setActiveIdx(idx);
   };
 
   const onTileLeave = (e: React.PointerEvent) => {
-    if (e.pointerType !== "mouse") return;
-    setActiveKey(null);
+    if (e.pointerType !== "mouse" || pinned) return;
+    setActiveIdx(null);
   };
 
-  const onTileKeyDown = (e: React.KeyboardEvent, key: string) => {
+  const onTileKeyDown = (e: React.KeyboardEvent, idx: number) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      setActiveKey(activeKey === key ? null : key);
+      onTileClick(idx);
     }
-    if (e.key === "Escape") setActiveKey(null);
   };
 
   return (
@@ -165,8 +185,7 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
         style={{ transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)` }}
       >
         {tiles.map((project, i) => {
-          const key = `${project.id}-${i}`;
-          const expanded = key === activeKey;
+          const isActive = i === activeIdx;
           // z-component of the tile's outward normal after both rotations;
           // positive means the tile faces the viewer.
           const toRad = Math.PI / 180;
@@ -179,20 +198,19 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
             0.05;
           return (
             <div
-              key={key}
+              key={`${project.id}-${i}`}
               role="button"
               tabIndex={0}
-              aria-expanded={expanded}
+              aria-expanded={isActive}
               aria-label={`${project.title}, ${project.tag}`}
-              className={`globe-tile ${expanded ? "expanded" : ""}`}
+              className={`globe-tile ${isActive ? "active" : ""}`}
               style={{
-                transform: `rotateY(${positions[i].lon}deg) rotateX(${-positions[i].lat}deg) translateZ(${radius + (expanded ? EXPAND_Z_BOOST : 0)}px)`,
+                transform: `rotateY(${positions[i].lon}deg) rotateX(${-positions[i].lat}deg) translateZ(${radius}px)`,
               }}
-              onPointerEnter={(e) => onTileEnter(e, key, facing)}
+              onPointerEnter={(e) => onTileEnter(e, i, facing)}
               onPointerLeave={onTileLeave}
-              onClick={() => openTile(key)}
-              onKeyDown={(e) => onTileKeyDown(e, key)}
-              onBlur={() => setActiveKey(null)}
+              onClick={() => onTileClick(i)}
+              onKeyDown={(e) => onTileKeyDown(e, i)}
             >
               <span className="globe-tile-logo" aria-hidden>
                 <TechLogo slug={project.logo} hue={project.hue} size={30} />
@@ -203,38 +221,79 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
               <span className="font-mono text-[9.5px] text-(--ink-45) leading-tight">
                 {project.tag}
               </span>
-              {expanded && (
-                <span className="globe-tile-detail">
-                  <span className="globe-tile-desc">{project.description}</span>
-                  <span className="flex gap-2 mt-2.5">
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="globe-tile-link globe-tile-link-primary"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Live →
-                      </a>
-                    )}
-                    {project.repoUrl && (
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="globe-tile-link"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        GitHub
-                      </a>
-                    )}
-                  </span>
-                </span>
-              )}
             </div>
           );
         })}
+      </div>
+
+      {/* Flat detail card, centered over the globe — never skewed by the
+          sphere. Hover previews it; clicking a tile pins it so the links
+          are clickable. */}
+      <div
+        className={`globe-detail ${active ? "open" : ""} ${pinned ? "pinned" : ""}`}
+        aria-hidden={!active}
+      >
+        {active && (
+          <>
+            {pinned && (
+              <button
+                type="button"
+                aria-label="Close project details"
+                className="globe-detail-close"
+                onClick={() => {
+                  setActiveIdx(null);
+                  setPinned(false);
+                }}
+              >
+                ✕
+              </button>
+            )}
+            <span className="flex items-center gap-3 mb-3">
+              <TechLogo slug={active.logo} hue={active.hue} size={30} />
+              {active.award && (
+                <span className="ml-auto rounded-full px-3 py-1 text-[11px] font-bold tracking-wide bg-[rgba(242,200,148,0.15)] border border-[rgba(242,200,148,0.35)] text-[#f2c894]">
+                  {active.award}
+                </span>
+              )}
+            </span>
+            <span className="block text-[19px] font-extrabold tracking-tight">
+              {active.title}
+            </span>
+            <span className="block font-mono text-[11px] text-(--ink-45) mt-0.5 mb-2.5">
+              {active.tag}
+            </span>
+            <span className="block text-[13px] leading-relaxed text-[rgba(241,239,250,0.72)]">
+              {active.description}
+            </span>
+            <span className="flex gap-2 mt-4">
+              {active.liveUrl && (
+                <a
+                  href={active.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="globe-tile-link globe-tile-link-primary"
+                >
+                  Live →
+                </a>
+              )}
+              {active.repoUrl && (
+                <a
+                  href={active.repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="globe-tile-link"
+                >
+                  GitHub
+                </a>
+              )}
+            </span>
+            {!pinned && (
+              <span className="block font-mono text-[10px] text-(--ink-45) mt-3">
+                click to pin
+              </span>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
