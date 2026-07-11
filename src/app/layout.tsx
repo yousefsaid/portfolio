@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Schibsted_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
-const sans = Schibsted_Grotesk({
-  variable: "--font-schibsted",
+const sans = Bricolage_Grotesque({
+  variable: "--font-sans-face",
   subsets: ["latin"],
 });
 

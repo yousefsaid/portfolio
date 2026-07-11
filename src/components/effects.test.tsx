@@ -5,7 +5,7 @@ import { CursorSpotlight } from "./CursorSpotlight";
 import { LiquidWordmark } from "./LiquidWordmark";
 import { ScrambleText } from "./ScrambleText";
 import { Starfield } from "./Starfield";
-import { TiltCard } from "./TiltCard";
+import { TechLogo } from "./TechLogo";
 import type { ContributionDay } from "@/lib/github";
 
 function mockMatchMedia(matcher: (query: string) => boolean) {
@@ -55,14 +55,10 @@ describe("ScrambleText", () => {
   });
 });
 
-describe("TiltCard", () => {
-  it("renders its children", () => {
-    render(
-      <TiltCard>
-        <p>card body</p>
-      </TiltCard>,
-    );
-    expect(screen.getByText("card body")).toBeInTheDocument();
+describe("TechLogo", () => {
+  it("renders the named logo as an accessible image", () => {
+    render(<TechLogo slug="python" hue="linear-gradient(135deg, #f2c894, #7ed4c0)" />);
+    expect(screen.getByRole("img", { name: /python logo/i })).toBeInTheDocument();
   });
 });
 

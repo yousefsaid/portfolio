@@ -1,4 +1,5 @@
 import { PROJECTS } from "@/data/projects";
+import { TechLogo } from "./TechLogo";
 
 /**
  * Scannable glass-card grid of all projects — the fast path for
@@ -20,10 +21,9 @@ export function ProjectGrid() {
             className="glass relative rounded-[26px] p-7 flex flex-col transition-transform duration-200 hover:-translate-y-1"
           >
             <div className="flex items-center gap-3 mb-4">
-              <span
-                className="w-10 h-10 rounded-xl shrink-0 shadow-[0_6px_16px_rgba(0,0,0,0.4)]"
-                style={{ background: project.hue }}
-              />
+              <span className="w-11 h-11 rounded-xl shrink-0 flex items-center justify-center bg-white/6 border border-white/10">
+                <TechLogo slug={project.logo} hue={project.hue} size={26} />
+              </span>
               {project.award && (
                 <span className="ml-auto rounded-full px-3 py-1 text-[11px] font-bold tracking-wide bg-[rgba(242,200,148,0.15)] border border-[rgba(242,200,148,0.35)] text-[#f2c894]">
                   {project.award}

@@ -14,7 +14,7 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-schibsted);
+  --font-sans: var(--font-sans-face);
   --font-mono: var(--font-jetbrains);
 }
 
@@ -281,17 +281,65 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-.globe-tile.selected {
-  outline: 2.5px solid var(--accent);
-  outline-offset: 2px;
+/* Hover/focus/tap expands the tile in place to show project details. */
+.globe-tile.expanded {
+  width: 250px;
+  height: auto;
+  min-height: 240px;
+  margin: -120px 0 0 -125px;
+  padding: 18px;
+  background: rgba(20, 17, 34, 0.92);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  cursor: default;
+  z-index: 5;
 }
 
-.globe-tile-swatch {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+.globe-tile-logo {
+  display: inline-flex;
   margin-bottom: auto;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.globe-tile-detail {
+  display: block;
+  margin-top: 8px;
+}
+
+.globe-tile-desc {
+  display: block;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(241, 239, 250, 0.72);
+}
+
+.globe-tile-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background 0.15s ease;
+}
+
+.globe-tile-link:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.globe-tile-link-primary {
+  background: #f4f2fc;
+  color: #14131f;
+  border-color: #f4f2fc;
+}
+
+.globe-tile-link-primary:hover {
+  background: #fff;
 }
 
 @media (max-width: 768px) {
@@ -303,8 +351,10 @@ body {
     padding: 11px;
   }
 
-  .globe-tile-swatch {
-    width: 30px;
-    height: 30px;
+  .globe-tile.expanded {
+    width: 220px;
+    height: auto;
+    min-height: 220px;
+    margin: -110px 0 0 -110px;
   }
 }

@@ -5,8 +5,15 @@ import { PROJECTS } from "@/data/projects";
 import { SITE } from "@/data/site";
 import { HeroStage } from "./HeroStage";
 
+function getFirstTile() {
+  const [tile] = screen.getAllByRole("button", {
+    name: new RegExp(PROJECTS[0].title, "i"),
+  });
+  return tile;
+}
+
 describe("HeroStage", () => {
-  it("shows the intro by default", () => {
+  it("shows the intro", () => {
     render(<HeroStage />);
     expect(screen.getByText(SITE.name)).toBeInTheDocument();
     expect(screen.getByText(SITE.tagline)).toBeInTheDocument();
@@ -26,65 +33,59 @@ describe("HeroStage", () => {
     }
   });
 
-  it("opens the project panel when a tile is clicked", async () => {
+  it("expands a tile in place and keeps the intro visible", async () => {
     const user = userEvent.setup();
     render(<HeroStage />);
-    const [firstTile] = screen.getAllByRole("button", {
-      name: new RegExp(PROJECTS[0].title, "i"),
-    });
+    const tile = getFirstTile();
 
-    await user.click(firstTile);
+    await user.click(tile);
 
+    expect(tile).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText(PROJECTS[0].description)).toBeInTheDocument();
     expect(
-      await screen.findByText(PROJECTS[0].description),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("link", { name: /visit app/i }),
+      screen.getByRole("link", { name: /live/i }),
     ).toHaveAttribute("href", PROJECTS[0].liveUrl);
+    // The whole point: the intro stays on screen.
+    expect(screen.getByText(SITE.tagline)).toBeInTheDocument();
   });
 
-  it("does not open a panel after dragging, and never captures on a plain tap", async () => {
+  it("collapses the tile on Escape", async () => {
+    const user = userEvent.setup();
+    render(<HeroStage />);
+    const tile = getFirstTile();
+
+    await user.click(tile);
+    fireEvent.keyDown(tile, { key: "Escape" });
+
+    expect(tile).toHaveAttribute("aria-expanded", "false");
+    expect(
+      screen.queryByText(PROJECTS[0].description),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not expand after dragging, and never captures on a plain tap", async () => {
     const capture = vi.fn();
     HTMLElement.prototype.setPointerCapture = capture;
     render(<HeroStage />);
     const viewport = screen.getByRole("group", { name: /projects globe/i });
-    const [firstTile] = screen.getAllByRole("button", {
-      name: new RegExp(PROJECTS[0].title, "i"),
-    });
+    const tile = getFirstTile();
 
     // Drag: pointer moves beyond the threshold → capture requested,
-    // and the click that follows must not open the panel.
+    // and the click that follows must not expand a tile.
     fireEvent.pointerDown(viewport, { pointerId: 1, clientX: 10, clientY: 10 });
     fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 60, clientY: 10 });
     expect(capture).toHaveBeenCalledTimes(1);
     fireEvent.pointerUp(viewport, { pointerId: 1 });
-    fireEvent.click(firstTile);
-    expect(screen.queryByText(PROJECTS[0].description)).not.toBeInTheDocument();
+    fireEvent.click(tile);
+    expect(tile).toHaveAttribute("aria-expanded", "false");
 
     // Plain tap: no movement → capture must NOT be requested (capturing
-    // retargets the click and swallows tile selection in real browsers).
+    // retargets the click and swallows tile interaction in real browsers).
     capture.mockClear();
     fireEvent.pointerDown(viewport, { pointerId: 2, clientX: 10, clientY: 10 });
     fireEvent.pointerUp(viewport, { pointerId: 2 });
     expect(capture).not.toHaveBeenCalled();
-    fireEvent.click(firstTile);
-    expect(
-      await screen.findByText(PROJECTS[0].description),
-    ).toBeInTheDocument();
-  });
-
-  it("returns to the intro when the panel is closed", async () => {
-    const user = userEvent.setup();
-    render(<HeroStage />);
-    const [firstTile] = screen.getAllByRole("button", {
-      name: new RegExp(PROJECTS[0].title, "i"),
-    });
-
-    await user.click(firstTile);
-    await user.click(
-      await screen.findByRole("button", { name: /close project details/i }),
-    );
-
-    expect(await screen.findByText(SITE.tagline)).toBeInTheDocument();
+    fireEvent.click(tile);
+    expect(tile).toHaveAttribute("aria-expanded", "true");
   });
 });
