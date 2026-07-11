@@ -74,8 +74,6 @@ export function ProjectGlobe({ projects, selectedId, onSelect }: ProjectGlobePro
   }, []);
 
   const onPointerDown = (e: React.PointerEvent) => {
-    // Capture so fast drags keep working outside the globe's bounds.
-    e.currentTarget.setPointerCapture?.(e.pointerId);
     dragRef.current = {
       pointerX: e.clientX,
       pointerY: e.clientY,
@@ -90,7 +88,13 @@ export function ProjectGlobe({ projects, selectedId, onSelect }: ProjectGlobePro
     if (!drag) return;
     const dx = e.clientX - drag.pointerX;
     const dy = e.clientY - drag.pointerY;
-    if (Math.abs(dx) + Math.abs(dy) > 4) movedRef.current = true;
+    if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 4) {
+      movedRef.current = true;
+      // Capture only once a real drag starts, so fast drags keep working
+      // outside the globe's bounds. Capturing on pointerdown would retarget
+      // the eventual `click` to this element and swallow tile clicks.
+      e.currentTarget.setPointerCapture?.(e.pointerId);
+    }
     setRot({
       x: Math.max(-40, Math.min(40, drag.startRot.x - dy * 0.25)),
       y: drag.startRot.y + dx * 0.3,
