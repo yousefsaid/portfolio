@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PROJECTS } from "@/data/projects";
 import { SITE } from "@/data/site";
+import { LiquidWordmark } from "./LiquidWordmark";
 import { ProjectGlobe } from "./ProjectGlobe";
 import { ProjectPanel } from "./ProjectPanel";
 
@@ -18,10 +19,7 @@ export function HeroStage() {
   const selected = PROJECTS.find((p) => p.id === selectedId) ?? null;
 
   return (
-    <section
-      id="projects"
-      className="relative flex flex-col lg:block min-h-[calc(100vh-82px)]"
-    >
+    <section className="relative flex flex-col lg:block min-h-[calc(100vh-82px)]">
       {/* Left column — intro or project panel */}
       <div className="relative z-10 px-6 pt-10 lg:pt-0 lg:px-0 lg:absolute lg:left-[6vw] lg:top-1/2 lg:-translate-y-1/2 lg:max-w-[420px]">
         <AnimatePresence mode="wait" initial={false}>
@@ -46,11 +44,14 @@ export function HeroStage() {
               exit={{ opacity: 0, x: -24 }}
               transition={PANEL_TRANSITION}
             >
-              <h1 className="iridescent-text text-[72px] sm:text-[96px] font-extrabold tracking-tighter leading-none pb-[0.14em] -mb-[0.1em]">
-                {SITE.wordmark}
+              <h1 className="text-[72px] sm:text-[96px] font-extrabold tracking-tighter leading-none">
+                <LiquidWordmark text={SITE.wordmark} />
               </h1>
               <p className="text-[32px] sm:text-[40px] font-extrabold tracking-tight mt-1.5">
                 {SITE.name}
+              </p>
+              <p className="font-mono text-[12.5px] tracking-wide text-(--ink-45) mt-2">
+                {SITE.role}
               </p>
               <p className="text-[17px] font-medium text-(--ink-60) mt-2.5 leading-normal">
                 {SITE.tagline}
@@ -98,7 +99,7 @@ export function HeroStage() {
         />
       </div>
 
-      <p className="hidden lg:block absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11.5px] tracking-[0.14em] uppercase text-[rgba(29,28,43,0.35)]">
+      <p className="hidden lg:block absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[11.5px] tracking-[0.14em] uppercase text-[rgba(241,239,250,0.35)]">
         projects — drag to explore
       </p>
     </section>

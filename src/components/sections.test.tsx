@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { PROJECTS } from "@/data/projects";
+import { ROLES, SCHOOLS } from "@/data/experience";
 import { SITE } from "@/data/site";
 import { About } from "./About";
+import { ContactCta } from "./ContactCta";
+import { Experience } from "./Experience";
 import { Footer } from "./Footer";
 import { GlassNav } from "./GlassNav";
+import { ProjectGrid } from "./ProjectGrid";
 
 describe("About", () => {
   it("renders the bio and every skill", () => {
@@ -25,6 +30,60 @@ describe("Footer", () => {
       "href",
       SITE.links.github,
     );
+    expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute(
+      "href",
+      SITE.links.linkedin,
+    );
+  });
+});
+
+describe("ProjectGrid", () => {
+  it("renders a card per project with its links", () => {
+    render(<ProjectGrid />);
+    for (const project of PROJECTS) {
+      expect(screen.getByText(project.title)).toBeInTheDocument();
+    }
+    const liveLinks = screen.getAllByRole("link", { name: /live/i });
+    expect(liveLinks.length).toBe(PROJECTS.filter((p) => p.liveUrl).length);
+  });
+
+  it("shows the award badge for awarded projects", () => {
+    render(<ProjectGrid />);
+    for (const project of PROJECTS) {
+      if (project.award) {
+        expect(screen.getByText(project.award)).toBeInTheDocument();
+      }
+    }
+  });
+});
+
+describe("Experience", () => {
+  it("renders every role and school", () => {
+    render(<Experience />);
+    for (const role of ROLES) {
+      expect(screen.getByText(role.period)).toBeInTheDocument();
+    }
+    for (const school of SCHOOLS) {
+      expect(screen.getByText(school.institution)).toBeInTheDocument();
+    }
+  });
+
+  it("renders each role's highlights", () => {
+    render(<Experience />);
+    for (const role of ROLES) {
+      for (const highlight of role.highlights) {
+        expect(screen.getByText(highlight)).toBeInTheDocument();
+      }
+    }
+  });
+});
+
+describe("ContactCta", () => {
+  it("renders a mailto CTA and LinkedIn link", () => {
+    render(<ContactCta />);
+    expect(
+      screen.getByRole("link", { name: SITE.links.email }),
+    ).toHaveAttribute("href", `mailto:${SITE.links.email}`);
     expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute(
       "href",
       SITE.links.linkedin,

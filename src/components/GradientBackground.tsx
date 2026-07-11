@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { Starfield } from "./Starfield";
 
 const ShaderCanvas = dynamic(
   () => import("./ShaderCanvas").then((m) => m.ShaderCanvas),
@@ -43,6 +44,11 @@ export function GradientBackground() {
       data-testid="gradient-background"
     >
       <ShaderCanvas />
+      {/* Deterministic darkening scrim — the shader's env lighting renders
+          brighter and warmer than its colors suggest, so the dark look is
+          enforced here in CSS instead of fought inside the shader. */}
+      <div className="absolute inset-0 bg-[rgba(14,10,26,0.55)]" />
+      <Starfield />
     </div>
   );
 }

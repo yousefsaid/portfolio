@@ -22,10 +22,20 @@ describe("PROJECTS data", () => {
 
   it("uses https URLs for all links", () => {
     for (const project of PROJECTS) {
-      expect(project.repoUrl).toMatch(/^https:\/\//);
+      if (project.repoUrl) {
+        expect(project.repoUrl).toMatch(/^https:\/\//);
+      }
       if (project.liveUrl) {
         expect(project.liveUrl).toMatch(/^https:\/\//);
       }
+    }
+  });
+
+  it("every project has a repo, a live link, or an award", () => {
+    for (const project of PROJECTS) {
+      expect(
+        Boolean(project.repoUrl || project.liveUrl || project.award),
+      ).toBe(true);
     }
   });
 });

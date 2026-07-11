@@ -1,4 +1,5 @@
 import { SITE } from "@/data/site";
+import { ScrambleText } from "./ScrambleText";
 
 export function GlassNav() {
   return (
@@ -14,18 +15,21 @@ export function GlassNav() {
           {SITE.wordmark}
         </a>
         <a href="#projects" className="nav-link">
-          Projects
+          <ScrambleText text="Projects" />
+        </a>
+        <a href="#experience" className="nav-link hidden sm:inline">
+          <ScrambleText text="Experience" />
         </a>
         <a href="#about" className="nav-link">
-          About
+          <ScrambleText text="About" />
         </a>
         <a
           href={SITE.links.github}
           target="_blank"
           rel="noopener noreferrer"
-          className="nav-link hidden sm:inline"
+          className="nav-link hidden md:inline"
         >
-          GitHub
+          <ScrambleText text="GitHub" />
         </a>
         <a
           href={SITE.links.resume}

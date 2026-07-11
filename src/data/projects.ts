@@ -6,16 +6,18 @@ export interface Project {
   /** CSS gradient used for the tile/panel swatch */
   hue: string;
   liveUrl?: string;
-  repoUrl: string;
+  repoUrl?: string;
+  /** e.g. hackathon win — shown as a badge in the grid/panel */
+  award?: string;
 }
 
 export const PROJECTS: readonly Project[] = [
   {
     id: "sentinel-trace",
     title: "Sentinel Trace",
-    tag: "TypeScript · Next.js · OpenTelemetry",
+    tag: "TypeScript · Next.js · OpenTelemetry · Convex",
     description:
-      "Agentic observability dashboard — real-time chain-of-thought visibility for multi-agent AI systems, built on the OpenTelemetry GenAI semantic conventions.",
+      "Real-time observability sidecar for multi-agent LLM pipelines — telemetry ingestion on the OpenTelemetry GenAI conventions with a persistent Convex state backend for drift detection, latency analysis, and per-token cost tracking.",
     hue: "linear-gradient(135deg, #8f7ee0, #5aa6e8)",
     liveUrl: "https://sentineltrace-rouge.vercel.app",
     repoUrl: "https://github.com/yousefsaid/sentinel-trace",
@@ -23,12 +25,21 @@ export const PROJECTS: readonly Project[] = [
   {
     id: "shadow-architect",
     title: "Shadow Architect",
-    tag: "TypeScript · Next.js",
+    tag: "Next.js · React Flow · Convex · Python",
     description:
-      "AI-native infrastructure visualization with drift detection and compliance auditing — see what your infra actually looks like, not what the diagrams claim.",
+      "Multi-agent system that turns infrastructure configs — AWS, Docker, Bazel — into interactive topology graphs, with a drift-detection loop that compares state across runs and flags unapproved changes.",
     hue: "linear-gradient(135deg, #e08bb0, #f2c894)",
     liveUrl: "https://shadowarch-gold.vercel.app",
     repoUrl: "https://github.com/yousefsaid/shadow-architect",
+  },
+  {
+    id: "icom",
+    title: "ICOM",
+    tag: "Python · Pydantic AI",
+    description:
+      "AI incident commander that orchestrates triage, communication, and remediation during live incidents. Built with Pydantic AI — winner of Arctic Wolf's internal hackathon.",
+    hue: "linear-gradient(135deg, #7ea2e8, #b48be0)",
+    award: "Hackathon winner",
   },
   {
     id: "glucose-analytics",
