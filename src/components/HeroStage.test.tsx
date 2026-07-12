@@ -70,10 +70,15 @@ describe("HeroStage", () => {
     const viewport = screen.getByRole("group", { name: /projects globe/i });
     const tile = getFirstTile();
 
-    // Drag: pointer moves beyond the threshold → capture requested,
-    // and the click that follows must not expand a tile.
+    // Drag: pointer moves beyond the threshold with the button held →
+    // capture requested, and the click that follows must not expand a tile.
     fireEvent.pointerDown(viewport, { pointerId: 1, clientX: 10, clientY: 10 });
-    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 60, clientY: 10 });
+    fireEvent.pointerMove(viewport, {
+      pointerId: 1,
+      clientX: 60,
+      clientY: 10,
+      buttons: 1,
+    });
     expect(capture).toHaveBeenCalledTimes(1);
     fireEvent.pointerUp(viewport, { pointerId: 1 });
     fireEvent.click(tile);
@@ -85,6 +90,38 @@ describe("HeroStage", () => {
     fireEvent.pointerDown(viewport, { pointerId: 2, clientX: 10, clientY: 10 });
     fireEvent.pointerUp(viewport, { pointerId: 2 });
     expect(capture).not.toHaveBeenCalled();
+    fireEvent.click(tile);
+    expect(tile).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("recovers from a lost pointerup so tiles stay clickable", async () => {
+    render(<HeroStage />);
+    const viewport = screen.getByRole("group", { name: /projects globe/i });
+    const tile = getFirstTile();
+
+    // Drag on empty space, but the pointerup never arrives (released
+    // off-window, or a native selection drag swallowed it).
+    fireEvent.pointerDown(viewport, { pointerId: 1, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(viewport, {
+      pointerId: 1,
+      clientX: 80,
+      clientY: 10,
+      buttons: 1,
+    });
+
+    // The next move arrives with no button held: the drag must self-heal
+    // instead of staying glued to the cursor.
+    fireEvent.pointerMove(viewport, {
+      pointerId: 1,
+      clientX: 120,
+      clientY: 10,
+      buttons: 0,
+    });
+
+    // A fresh click on a tile now expands it — the stale drag no longer
+    // swallows the interaction.
+    fireEvent.pointerDown(tile, { pointerId: 2, clientX: 10, clientY: 10 });
+    fireEvent.pointerUp(tile, { pointerId: 2 });
     fireEvent.click(tile);
     expect(tile).toHaveAttribute("aria-expanded", "true");
   });

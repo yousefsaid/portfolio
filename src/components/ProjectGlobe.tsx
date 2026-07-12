@@ -41,6 +41,7 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
   const dragRef = useRef<DragState | null>(null);
   const movedRef = useRef(false);
   const activeRef = useRef(false);
+  const capturedPointerRef = useRef<number | null>(null);
   const [radius, setRadius] = useState(MAX_RADIUS);
 
   useEffect(() => {
@@ -115,6 +116,13 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
   const onPointerMove = (e: React.PointerEvent) => {
     const drag = dragRef.current;
     if (!drag) return;
+    // Recover from a `pointerup` we never received — released off-window, or
+    // swallowed by a native selection/drag started on empty space. Without
+    // this the globe stays glued to the cursor and blocks tile hover/click.
+    if (e.buttons === 0) {
+      endDrag(e);
+      return;
+    }
     const dx = e.clientX - drag.pointerX;
     const dy = e.clientY - drag.pointerY;
     if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 4) {
@@ -124,7 +132,10 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
       // Capture only once a real drag starts, so fast drags keep working
       // outside the globe's bounds. Capturing on pointerdown would retarget
       // the eventual `click` to this element and swallow tile clicks.
-      e.currentTarget.setPointerCapture?.(e.pointerId);
+      if (e.currentTarget.setPointerCapture) {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        capturedPointerRef.current = e.pointerId;
+      }
     }
     setRot({
       x: Math.max(-40, Math.min(40, drag.startRot.x - dy * 0.25)),
@@ -132,9 +143,18 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     });
   };
 
-  const endDrag = () => {
+  const endDrag = (e: React.PointerEvent) => {
     dragRef.current = null;
     setGrabbing(false);
+    // Release capture explicitly so a lost pointerup can't leave the viewport
+    // holding the pointer and swallowing later tile interactions.
+    const captured = capturedPointerRef.current;
+    if (captured !== null && e.currentTarget.releasePointerCapture) {
+      if (e.currentTarget.hasPointerCapture?.(captured)) {
+        e.currentTarget.releasePointerCapture(captured);
+      }
+      capturedPointerRef.current = null;
+    }
   };
 
   const onTileClick = (idx: number) => {
@@ -172,7 +192,7 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
   return (
     <div
       ref={viewportRef}
-      className={`globe-viewport flex items-center justify-center ${grabbing ? "grabbing" : ""}`}
+      className={`globe-viewport flex items-center justify-center select-none touch-none ${grabbing ? "grabbing" : ""}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
