@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ROLES, SCHOOLS } from "@/data/experience";
+import { ROLES } from "@/data/experience";
 
 /**
  * Work history as a scroll-driven timeline: a gradient line fills the
@@ -76,7 +76,7 @@ export function Experience() {
 
         <ol>
           {ROLES.map((role) => (
-            <li key={role.id} className="tl-item relative pl-10 sm:pl-12 pb-11">
+            <li key={role.id} className="tl-item relative pl-10 sm:pl-12 pb-11 last:pb-2">
               <span className="tl-dot" aria-hidden />
               <div className="grid sm:grid-cols-[160px_1fr] gap-x-7 gap-y-1">
                 <div>
@@ -120,24 +120,6 @@ export function Experience() {
             </li>
           ))}
 
-          {SCHOOLS.map((school) => (
-            <li key={school.id} className="tl-item relative pl-10 sm:pl-12 pb-11 last:pb-2">
-              <span className="tl-dot" aria-hidden />
-              <div className="grid sm:grid-cols-[160px_1fr] gap-x-7 gap-y-1">
-                <p className="font-mono text-[12px] text-(--ink-45) pt-0.5">
-                  {school.period}
-                </p>
-                <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
-                  <h3 className="text-[16px] font-bold tracking-tight">
-                    {school.institution}
-                  </h3>
-                  <span className="text-[14px] text-(--ink-60)">
-                    {school.degree}
-                  </span>
-                </div>
-              </div>
-            </li>
-          ))}
         </ol>
       </div>
     </section>

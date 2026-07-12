@@ -18,6 +18,14 @@ describe("About", () => {
       expect(screen.getByText(skill)).toBeInTheDocument();
     }
   });
+
+  it("renders education", () => {
+    render(<About />);
+    for (const school of SCHOOLS) {
+      expect(screen.getByText(school.institution)).toBeInTheDocument();
+      expect(screen.getByText(school.degree)).toBeInTheDocument();
+    }
+  });
 });
 
 describe("Footer", () => {
@@ -58,15 +66,10 @@ describe("ProjectGrid", () => {
 });
 
 describe("Experience", () => {
-  it("renders every role and school", () => {
+  it("renders every role", () => {
     render(<Experience />);
     for (const role of ROLES) {
       expect(screen.getByText(role.period)).toBeInTheDocument();
-    }
-    for (const school of SCHOOLS) {
-      // Institutions can also appear as a role's company (UW internship).
-      expect(screen.getAllByText(school.institution).length).toBeGreaterThan(0);
-      expect(screen.getByText(school.degree)).toBeInTheDocument();
     }
   });
 

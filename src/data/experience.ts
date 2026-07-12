@@ -101,14 +101,6 @@ export const ROLES: readonly Role[] = [
       "Cut server costs 50% by migrating data to IBM Cloud, built a Python/React chatbot, and shipped a REST API that improved call times 30%.",
     ],
   },
-  {
-    id: "glu-2020",
-    title: "Quality Assurance Engineer",
-    company: "Glu Mobile",
-    period: "May — Aug 2020",
-    kind: "Internship",
-    highlights: [],
-  },
 ] as const;
 
 export const SCHOOLS: readonly School[] = [

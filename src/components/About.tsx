@@ -1,3 +1,4 @@
+import { SCHOOLS } from "@/data/experience";
 import { SITE } from "@/data/site";
 
 export function About() {
@@ -23,6 +24,22 @@ export function About() {
             </li>
           ))}
         </ul>
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-center gap-x-12 gap-y-3">
+          {SCHOOLS.map((school) => (
+            <div key={school.id}>
+              <p className="text-[14.5px] font-bold tracking-tight">
+                {school.institution}
+              </p>
+              <p className="text-[13px] text-(--ink-60) mt-0.5">
+                {school.degree}
+                <span className="font-mono text-[11px] text-(--ink-45)">
+                  {" "}
+                  · {school.period}
+                </span>
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
