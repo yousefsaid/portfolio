@@ -226,9 +226,11 @@ body {
 
 /* ---------- experience timeline ---------- */
 
+/* Center line on desktop, left rail on mobile. */
 .tl-line {
   position: absolute;
-  left: 7px;
+  left: 50%;
+  margin-left: -1px;
   top: 6px;
   bottom: 6px;
   width: 2px;
@@ -245,9 +247,24 @@ body {
   transition: height 0.15s linear;
 }
 
+/* Alternating layout: [content | line | date] or mirrored. */
+.tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 76px 1fr;
+  padding-bottom: 56px;
+  /* Where the entry animates in from (overridden per side on desktop). */
+  --tl-from: translateY(18px);
+}
+
+.tl-item:last-child {
+  padding-bottom: 8px;
+}
+
 .tl-dot {
   position: absolute;
-  left: 2px;
+  left: 50%;
+  margin-left: -6px;
   top: 7px;
   width: 12px;
   height: 12px;
@@ -257,18 +274,87 @@ body {
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
+.tl-date {
+  grid-row: 1;
+  grid-column: 3;
+  padding-top: 2px;
+}
+
+.tl-content {
+  grid-row: 1;
+  grid-column: 1;
+  text-align: right;
+}
+
+.tl-item.tl-left .tl-head {
+  justify-content: flex-end;
+}
+
+.tl-item.tl-right .tl-date {
+  grid-column: 1;
+  text-align: right;
+}
+
+.tl-item.tl-right .tl-content {
+  grid-column: 3;
+  text-align: left;
+}
+
+@media (min-width: 769px) {
+  .tl-item.tl-left {
+    --tl-from: translateX(-44px);
+  }
+
+  .tl-item.tl-right {
+    --tl-from: translateX(44px);
+  }
+}
+
+@media (max-width: 768px) {
+  .tl-line {
+    left: 7px;
+    margin-left: 0;
+  }
+
+  .tl-dot {
+    left: 2px;
+    margin-left: 0;
+  }
+
+  .tl-item {
+    display: block;
+    padding-left: 2.5rem;
+    padding-bottom: 44px;
+  }
+
+  .tl-content,
+  .tl-item.tl-right .tl-content {
+    text-align: left;
+  }
+
+  .tl-item.tl-left .tl-head {
+    justify-content: flex-start;
+  }
+
+  .tl-date,
+  .tl-item.tl-right .tl-date {
+    text-align: left;
+    margin-bottom: 6px;
+  }
+}
+
 /* Entries start hidden only once JS is live (tl-ready), so content is
    fully visible without JS and under prefers-reduced-motion. */
 @media (prefers-reduced-motion: no-preference) {
   .tl-ready .tl-item {
     opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.55s ease, transform 0.55s ease;
+    transform: var(--tl-from);
+    transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
   .tl-ready .tl-item.in-view {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(0, 0);
   }
 }
 

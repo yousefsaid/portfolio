@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ROLES } from "@/data/experience";
+import { ROLES, SCHOOLS } from "@/data/experience";
 
 /**
- * Work history as a scroll-driven timeline: a gradient line fills the
- * track as you scroll, entries light up and fade in as they enter the
- * viewport. Static (everything visible) under reduced motion or no JS.
+ * Work history as a scroll-driven center timeline: a gradient line fills
+ * as you scroll, and entries slide in alternately from the left and
+ * right of the line. Falls back to a left rail on mobile, and to a
+ * fully visible static layout without JS or with reduced motion.
  */
 export function Experience() {
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -68,59 +69,77 @@ export function Experience() {
         Where I&apos;ve worked
       </h2>
 
-      <div ref={trackRef} className="tl-track relative max-w-[780px] mx-auto">
+      <div ref={trackRef} className="tl-track relative max-w-[980px] mx-auto">
         {/* Track + scroll-fill line */}
         <div className="tl-line" aria-hidden>
           <div className="tl-line-fill" style={{ height: `${progress * 100}%` }} />
         </div>
 
         <ol>
-          {ROLES.map((role) => (
-            <li key={role.id} className="tl-item relative pl-10 sm:pl-12 pb-11 last:pb-2">
+          {ROLES.map((role, idx) => (
+            <li
+              key={role.id}
+              className={`tl-item ${idx % 2 === 0 ? "tl-left" : "tl-right"}`}
+            >
               <span className="tl-dot" aria-hidden />
-              <div className="grid sm:grid-cols-[160px_1fr] gap-x-7 gap-y-1">
-                <div>
-                  <p className="font-mono text-[12px] text-(--ink-45) leading-relaxed pt-0.5">
-                    {role.period}
+              <div className="tl-date">
+                <p className="font-mono text-[12px] text-(--ink-45) leading-relaxed">
+                  {role.period}
+                </p>
+                {role.location && (
+                  <p className="font-mono text-[11px] text-(--ink-45) opacity-70">
+                    {role.location}
                   </p>
-                  {role.location && (
-                    <p className="font-mono text-[11px] text-(--ink-45) opacity-70">
-                      {role.location}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                    <h3 className="text-[17px] font-bold tracking-tight">
-                      {role.title}
-                    </h3>
-                    <span className="text-[15px] font-medium text-(--ink-60)">
-                      {role.company}
+                )}
+              </div>
+              <div className="tl-content">
+                <div className="tl-head flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                  <h3 className="text-[17px] font-bold tracking-tight">
+                    {role.title}
+                  </h3>
+                  <span className="text-[15px] font-medium text-(--ink-60)">
+                    {role.company}
+                  </span>
+                  {role.kind && (
+                    <span className="text-[12px] italic text-(--ink-45)">
+                      {role.kind.toLowerCase()}
                     </span>
-                    {role.kind && (
-                      <span className="text-[12px] italic text-(--ink-45)">
-                        {role.kind.toLowerCase()}
-                      </span>
-                    )}
-                  </div>
-                  {role.highlights.length > 0 && (
-                    <ul className="flex flex-col gap-1.5 mt-2.5">
-                      {role.highlights.map((highlight) => (
-                        <li
-                          key={highlight}
-                          className="text-[14px] leading-relaxed text-(--ink-60)"
-                        >
-                          {highlight}
-                        </li>
-                      ))}
-                    </ul>
                   )}
                 </div>
+                {role.highlights.length > 0 && (
+                  <ul className="flex flex-col gap-1.5 mt-2.5">
+                    {role.highlights.map((highlight) => (
+                      <li
+                        key={highlight}
+                        className="text-[14px] leading-relaxed text-(--ink-60)"
+                      >
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </li>
           ))}
-
         </ol>
+      </div>
+
+      {/* Education, separate from the work timeline */}
+      <p className="text-center text-[12.5px] font-bold tracking-[0.22em] uppercase text-(--ink-45) mt-20 mb-7">
+        Education
+      </p>
+      <div className="flex flex-col sm:flex-row justify-center text-center gap-x-20 gap-y-6">
+        {SCHOOLS.map((school) => (
+          <div key={school.id}>
+            <h3 className="text-[16.5px] font-bold tracking-tight">
+              {school.institution}
+            </h3>
+            <p className="text-[14px] text-(--ink-60) mt-1">{school.degree}</p>
+            <p className="font-mono text-[11.5px] text-(--ink-45) mt-1">
+              {school.period}
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );
