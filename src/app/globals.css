@@ -222,10 +222,6 @@ body {
   .chrome-text {
     animation: none;
   }
-
-  .liquid-distorted {
-    filter: none !important;
-  }
 }
 
 /* ---------- experience timeline ---------- */
