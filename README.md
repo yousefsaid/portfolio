@@ -1,4 +1,4 @@
-# yousefsaid.com
+# yousefs.dev
 
 Personal portfolio — Next.js 16, Tailwind v4, TypeScript.
 
