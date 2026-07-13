@@ -69,6 +69,17 @@ export const PROJECTS: readonly Project[] = [
     repoUrl: "https://github.com/yousefsaid/glucose-analytics",
   },
   {
+    id: "formulaforge",
+    title: "FormulaForge",
+    tag: "Python · FastAPI · MLX · Next.js",
+    description:
+      "A local-first Excel formula copilot: a fine-tuned Qwen3-0.6B model (MLX + LoRA) proposes formulas, then a deterministic validator checks syntax, references, and execution before anything is shown. Workbooks never leave the machine.",
+    hue: "linear-gradient(135deg, #f2c894, #8f7ee0)",
+    logo: "qwen",
+    liveUrl: "https://formulaforge-demo.vercel.app",
+    repoUrl: "https://github.com/yousefsaid/formulaforge",
+  },
+  {
     id: "flappy-ai",
     title: "FlappyAI",
     tag: "Python",

@@ -5,6 +5,7 @@ import {
   siOpentelemetry,
   siPydantic,
   siPython,
+  siQwen,
   siTypescript,
 } from "simple-icons";
 
@@ -14,6 +15,7 @@ const ICONS = {
   opentelemetry: siOpentelemetry,
   pydantic: siPydantic,
   python: siPython,
+  qwen: siQwen,
   typescript: siTypescript,
 } as const;
 
