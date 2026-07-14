@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { PROJECTS } from "@/data/projects";
 import { SITE } from "@/data/site";
 import { HeroStage } from "./HeroStage";
+
+const FOCUS_EVENT = "portfolio:focus-project";
 
 function getFirstTile() {
   const [tile] = screen.getAllByRole("button", {
@@ -13,6 +14,17 @@ function getFirstTile() {
 }
 
 describe("HeroStage", () => {
+  let onFocusProject: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    onFocusProject = vi.fn();
+    window.addEventListener(FOCUS_EVENT, onFocusProject);
+  });
+
+  afterEach(() => {
+    window.removeEventListener(FOCUS_EVENT, onFocusProject);
+  });
+
   it("shows the intro", () => {
     render(<HeroStage />);
     expect(screen.getByText(SITE.name)).toBeInTheDocument();
@@ -33,37 +45,40 @@ describe("HeroStage", () => {
     }
   });
 
-  it("expands a tile in place and keeps the intro visible", async () => {
-    const user = userEvent.setup();
+  it("previews a tile on hover and keeps the intro visible", () => {
     render(<HeroStage />);
     const tile = getFirstTile();
 
-    await user.click(tile);
+    fireEvent.pointerEnter(tile, { pointerType: "mouse" });
 
     expect(tile).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByText(PROJECTS[0].description)).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /live/i }),
-    ).toHaveAttribute("href", PROJECTS[0].liveUrl);
+    expect(screen.getByText(/click to view/i)).toBeInTheDocument();
     // The whole point: the intro stays on screen.
     expect(screen.getByText(SITE.tagline)).toBeInTheDocument();
   });
 
-  it("collapses the tile on Escape", async () => {
-    const user = userEvent.setup();
+  it("collapses the preview on Escape", () => {
     render(<HeroStage />);
     const tile = getFirstTile();
 
-    await user.click(tile);
+    fireEvent.pointerEnter(tile, { pointerType: "mouse" });
     fireEvent.keyDown(tile, { key: "Escape" });
 
     expect(tile).toHaveAttribute("aria-expanded", "false");
-    expect(
-      screen.queryByText(PROJECTS[0].description),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/click to view/i)).not.toBeInTheDocument();
   });
 
-  it("does not expand after dragging, and never captures on a plain tap", async () => {
+  it("clicking a tile hands off to the project grid instead of duplicating its detail", () => {
+    render(<HeroStage />);
+    const tile = getFirstTile();
+
+    fireEvent.click(tile);
+
+    expect(onFocusProject).toHaveBeenCalledTimes(1);
+    expect(onFocusProject.mock.calls[0][0].detail).toBe(PROJECTS[0].id);
+  });
+
+  it("does not hand off after dragging, and never captures on a plain tap", () => {
     const capture = vi.fn();
     HTMLElement.prototype.setPointerCapture = capture;
     render(<HeroStage />);
@@ -71,7 +86,7 @@ describe("HeroStage", () => {
     const tile = getFirstTile();
 
     // Drag: pointer moves beyond the threshold with the button held →
-    // capture requested, and the click that follows must not expand a tile.
+    // capture requested, and the click that follows must not hand off.
     fireEvent.pointerDown(viewport, { pointerId: 1, clientX: 10, clientY: 10 });
     fireEvent.pointerMove(viewport, {
       pointerId: 1,
@@ -82,19 +97,20 @@ describe("HeroStage", () => {
     expect(capture).toHaveBeenCalledTimes(1);
     fireEvent.pointerUp(viewport, { pointerId: 1 });
     fireEvent.click(tile);
-    expect(tile).toHaveAttribute("aria-expanded", "false");
+    expect(onFocusProject).not.toHaveBeenCalled();
 
     // Plain tap: no movement → capture must NOT be requested (capturing
-    // retargets the click and swallows tile interaction in real browsers).
+    // retargets the click and swallows tile interaction in real browsers),
+    // and the click hands off normally.
     capture.mockClear();
     fireEvent.pointerDown(viewport, { pointerId: 2, clientX: 10, clientY: 10 });
     fireEvent.pointerUp(viewport, { pointerId: 2 });
     expect(capture).not.toHaveBeenCalled();
     fireEvent.click(tile);
-    expect(tile).toHaveAttribute("aria-expanded", "true");
+    expect(onFocusProject).toHaveBeenCalledTimes(1);
   });
 
-  it("recovers from a lost pointerup so tiles stay clickable", async () => {
+  it("recovers from a lost pointerup so tiles stay clickable", () => {
     render(<HeroStage />);
     const viewport = screen.getByRole("group", { name: /projects globe/i });
     const tile = getFirstTile();
@@ -118,11 +134,11 @@ describe("HeroStage", () => {
       buttons: 0,
     });
 
-    // A fresh click on a tile now expands it — the stale drag no longer
+    // A fresh tap on a tile now hands off — the stale drag no longer
     // swallows the interaction.
     fireEvent.pointerDown(tile, { pointerId: 2, clientX: 10, clientY: 10 });
     fireEvent.pointerUp(tile, { pointerId: 2 });
     fireEvent.click(tile);
-    expect(tile).toHaveAttribute("aria-expanded", "true");
+    expect(onFocusProject).toHaveBeenCalledTimes(1);
   });
 });

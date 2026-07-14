@@ -62,17 +62,17 @@ export function Experience() {
 
   return (
     <section id="experience" className="relative z-10 px-6 pt-24 sm:pt-28">
-      <p className="text-center text-[12.5px] font-bold tracking-[0.22em] uppercase text-(--ink-45) mb-4">
-        Experience
-      </p>
-      <h2 className="text-center text-[32px] sm:text-[40px] font-extrabold tracking-tight mb-14">
+      <h2 className="text-[28px] sm:text-[36px] font-extrabold tracking-tight mb-14 max-w-[980px] mx-auto">
         Where I&apos;ve worked
       </h2>
 
       <div ref={trackRef} className="tl-track relative max-w-[980px] mx-auto">
         {/* Track + scroll-fill line */}
         <div className="tl-line" aria-hidden>
-          <div className="tl-line-fill" style={{ height: `${progress * 100}%` }} />
+          <div
+            className="tl-line-fill"
+            style={{ transform: `scaleY(${progress})` }}
+          />
         </div>
 
         <ol>
@@ -125,9 +125,9 @@ export function Experience() {
       </div>
 
       {/* Education, separate from the work timeline */}
-      <p className="text-center text-[12.5px] font-bold tracking-[0.22em] uppercase text-(--ink-45) mt-20 mb-7">
+      <h3 className="text-center text-[15px] font-bold text-(--ink-60) mt-20 mb-7">
         Education
-      </p>
+      </h3>
       <div className="flex flex-col sm:flex-row justify-center text-center gap-x-20 gap-y-6">
         {SCHOOLS.map((school) => (
           <div key={school.id}>

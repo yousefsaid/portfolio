@@ -10,7 +10,7 @@ export function GlassNav() {
       >
         <a
           href="#top"
-          className="iridescent-text font-extrabold text-[19px] tracking-tight"
+          className="text-(--ink) font-extrabold text-[19px] tracking-tight"
         >
           {SITE.wordmark}
         </a>
@@ -35,10 +35,7 @@ export function GlassNav() {
           href={SITE.links.resume}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white shadow-[0_6px_18px_rgba(110,91,208,0.35)]"
-          style={{
-            background: "linear-gradient(120deg, #6e5bd0, #4f9fe0)",
-          }}
+          className="glass-btn glass-btn-primary !py-2.5 !px-5 !text-[13.5px]"
         >
           Resume
         </a>

@@ -1,16 +1,41 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { PROJECTS } from "@/data/projects";
+import { onFocusProject } from "@/lib/projectFocus";
 import { TechLogo } from "./TechLogo";
 
+const HIGHLIGHT_MS = 1600;
+
 /**
- * Scannable glass-card grid of all projects — the fast path for
- * recruiters, complementing the interactive globe above.
+ * The canonical, scannable list of every project. The globe above is a
+ * hover-only visual index into this grid: clicking a tile scrolls here
+ * and highlights the matching card instead of opening a second, duplicate
+ * detail view.
  */
 export function ProjectGrid() {
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    return onFocusProject((id) => {
+      const node = document.getElementById(`project-${id}`);
+      if (!node) return;
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      node.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "center",
+      });
+      setHighlightedId(id);
+      window.setTimeout(() => {
+        setHighlightedId((current) => (current === id ? null : current));
+      }, HIGHLIGHT_MS);
+    });
+  }, []);
+
   return (
     <section id="projects" className="relative z-10 px-6 pt-24 sm:pt-28">
-      <p className="text-center text-[12.5px] font-bold tracking-[0.22em] uppercase text-(--ink-45) mb-4">
-        Work
-      </p>
       <h2 className="text-center text-[32px] sm:text-[40px] font-extrabold tracking-tight mb-10">
         Projects
       </h2>
@@ -18,7 +43,10 @@ export function ProjectGrid() {
         {PROJECTS.map((project) => (
           <article
             key={project.id}
-            className="glass relative rounded-[26px] p-7 flex flex-col transition-transform duration-200 hover:-translate-y-1"
+            id={`project-${project.id}`}
+            className={`project-card glass relative rounded-[26px] p-7 flex flex-col transition-transform duration-200 hover:-translate-y-1 ${
+              highlightedId === project.id ? "project-highlight" : ""
+            }`}
           >
             <div className="flex items-center gap-3 mb-4">
               <span className="w-11 h-11 rounded-xl shrink-0 flex items-center justify-center bg-white/6 border border-white/10">

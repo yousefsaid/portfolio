@@ -22,7 +22,7 @@ export function HeroStage() {
         <p className="text-[14.5px] font-medium text-(--ink-45) mt-2">
           {SITE.role}
         </p>
-        <p className="text-[17px] font-medium text-(--ink-60) mt-2.5 leading-normal">
+        <p className="text-[19px] font-semibold text-(--ink) mt-2.5 leading-normal">
           {SITE.tagline}
         </p>
         <div className="flex flex-wrap gap-3 mt-7">

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Project } from "@/data/projects";
+import { focusProject } from "@/lib/projectFocus";
 import { TechLogo } from "./TechLogo";
 import {
   MAX_RADIUS,
@@ -37,7 +38,6 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
   const [rot, setRot] = useState<Rotation>({ x: -12, y: 0 });
   const [grabbing, setGrabbing] = useState(false);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
-  const [pinned, setPinned] = useState(false);
   const dragRef = useRef<DragState | null>(null);
   const movedRef = useRef(false);
   const activeRef = useRef(false);
@@ -63,7 +63,6 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setActiveIdx(null);
-        setPinned(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -128,7 +127,6 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 4) {
       movedRef.current = true;
       setActiveIdx(null);
-      setPinned(false);
       // Capture only once a real drag starts, so fast drags keep working
       // outside the globe's bounds. Capturing on pointerdown would retarget
       // the eventual `click` to this element and swallow tile clicks.
@@ -157,28 +155,24 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
     }
   };
 
+  // Click hands off to the project grid — the canonical, scannable list —
+  // instead of opening a second detail view with its own copy of the
+  // description and links.
   const onTileClick = (idx: number) => {
     if (movedRef.current) return;
-    if (pinned && activeIdx === idx) {
-      setActiveIdx(null);
-      setPinned(false);
-      return;
-    }
-    setActiveIdx(idx);
-    setPinned(true);
+    focusProject(tiles[idx].id);
   };
 
   const onTileEnter = (e: React.PointerEvent, idx: number, facing: boolean) => {
     // Ignore hovers on tiles rotated away from the viewer: they are
     // invisible (backface hidden) but can still catch the pointer
     // through gaps between front tiles.
-    if (e.pointerType !== "mouse" || dragRef.current || !facing || pinned)
-      return;
+    if (e.pointerType !== "mouse" || dragRef.current || !facing) return;
     setActiveIdx(idx);
   };
 
   const onTileLeave = (e: React.PointerEvent) => {
-    if (e.pointerType !== "mouse" || pinned) return;
+    if (e.pointerType !== "mouse") return;
     setActiveIdx(null);
   };
 
@@ -246,28 +240,13 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
         })}
       </div>
 
-      {/* Flat detail card, centered over the globe — never skewed by the
-          sphere. Hover previews it; clicking a tile pins it so the links
-          are clickable. */}
-      <div
-        className={`globe-detail ${active ? "open" : ""} ${pinned ? "pinned" : ""}`}
-        aria-hidden={!active}
-      >
+      {/* Lightweight hover peek, centered over the globe — never skewed by
+          the sphere. Title + tag only; the full description and links live
+          in the project grid below, which a click scrolls to and
+          highlights. */}
+      <div className={`globe-detail ${active ? "open" : ""}`} aria-hidden={!active}>
         {active && (
           <>
-            {pinned && (
-              <button
-                type="button"
-                aria-label="Close project details"
-                className="globe-detail-close"
-                onClick={() => {
-                  setActiveIdx(null);
-                  setPinned(false);
-                }}
-              >
-                ✕
-              </button>
-            )}
             <span className="flex items-center gap-3 mb-3">
               <TechLogo slug={active.logo} hue={active.hue} size={30} />
               {active.award && (
@@ -279,39 +258,12 @@ export function ProjectGlobe({ projects }: ProjectGlobeProps) {
             <span className="block text-[19px] font-extrabold tracking-tight">
               {active.title}
             </span>
-            <span className="block font-mono text-[11px] text-(--ink-45) mt-0.5 mb-2.5">
+            <span className="block font-mono text-[11px] text-(--ink-45) mt-0.5">
               {active.tag}
             </span>
-            <span className="block text-[13px] leading-relaxed text-[rgba(241,239,250,0.72)]">
-              {active.description}
+            <span className="block font-mono text-[10px] text-(--ink-45) mt-3">
+              click to view ↓
             </span>
-            <span className="flex gap-2 mt-4">
-              {active.liveUrl && (
-                <a
-                  href={active.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="globe-tile-link globe-tile-link-primary"
-                >
-                  Live →
-                </a>
-              )}
-              {active.repoUrl && (
-                <a
-                  href={active.repoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="globe-tile-link"
-                >
-                  GitHub
-                </a>
-              )}
-            </span>
-            {!pinned && (
-              <span className="block font-mono text-[10px] text-(--ink-45) mt-3">
-                click to pin
-              </span>
-            )}
           </>
         )}
       </div>

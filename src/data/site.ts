@@ -18,7 +18,7 @@ export interface SiteConfig {
 
 export const SITE: SiteConfig = {
   name: "Yousef Said",
-  role: "Open to new opportunities · previously SWE II @ Arctic Wolf",
+  role: "Previously SWE II @ Arctic Wolf · open to new opportunities",
   wordmark: "ys.",
   url: "https://portfolio-rho-mocha-50.vercel.app",
   tagline:

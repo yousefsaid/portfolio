@@ -11,12 +11,30 @@ const GITHUB_USERNAME = SITE.links.github.split("/").pop() ?? "";
  */
 export async function GitHubActivity() {
   const stats = await fetchGithubStats(GITHUB_USERNAME);
-  if (!stats) return null;
+
+  if (!stats) {
+    return (
+      <div className="glass relative max-w-[640px] mx-auto mt-6 rounded-[28px] px-7 py-8 sm:px-10 text-center">
+        <p className="text-[14px] text-(--ink-60)">
+          Live activity is briefly unavailable —{" "}
+          <a
+            href={SITE.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-(--ink) font-semibold hover:underline"
+          >
+            see the full history on GitHub
+          </a>
+          .
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="glass border-beam relative max-w-[640px] mx-auto mt-6 rounded-[28px] px-7 py-8 sm:px-10 text-center">
-      <p className="text-[12.5px] font-bold tracking-[0.22em] uppercase text-(--ink-45) mb-5">
-        GitHub activity
+      <p className="font-mono text-[11px] text-(--ink-45) mb-5">
+        github activity
       </p>
       <ContributionGrid weeks={stats.weeks} />
       <div className="flex flex-wrap justify-center gap-x-8 gap-y-1.5 mt-6 text-[14px] font-semibold text-(--ink-60)">
